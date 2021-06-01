@@ -1,6 +1,6 @@
 {
     "name": "jameslevi/neutrino",
-    "description": "Is a simple PDO database library in PHP.",
+    "description": "Is a simple database library using PDO in PHP.",
     "keywords": [
         "PDO",
         "database",
