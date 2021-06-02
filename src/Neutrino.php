@@ -420,11 +420,13 @@ class Neutrino extends DriverSupport
      * Execute an SQL query.
      *
      * @param string $query
-     * @return void
+     * @return object
      */
     public function query(string $query)
     {
-        return new Query($this, $this->conn->prepare(str_replace('  ', ' ', trim($query)), array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY)));
+        return new Query($this, $this->conn->prepare(str_replace('  ', ' ', trim($query)), array(
+            PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY
+        )));
     }
 
     /**
