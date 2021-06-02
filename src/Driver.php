@@ -39,7 +39,7 @@ abstract class Driver
     }
 
     /**
-     * Specifies how the driver will report failures.
+     * Specifies how the driver will report errors.
      *
      * @param string $mode
      * @return $this
@@ -95,7 +95,7 @@ abstract class Driver
     }
 
     /**
-     * Specifies the case of the column names.
+     * Causes column names to lowercase.
      *
      * @return $this
      */

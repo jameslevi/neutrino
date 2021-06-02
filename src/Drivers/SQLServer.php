@@ -32,16 +32,6 @@ class SQLServer extends Driver
     }
 
     /**
-     * Specify if query execution is direct or prepared.
-     *
-     * @return $this
-     */
-    public function directQuery()
-    {
-        return $this->addOption(PDO::SQLSRV_ATTR_DIRECT_QUERY, true);
-    }
-
-    /**
      * Set the query timeout in seconds.
      *
      * @param int $timeout

@@ -51,14 +51,4 @@ class MySQL extends Driver
     {
         return $this->addOption(PDO::MYSQL_ATTR_MAX_BUFFER_SIZE, $size);
     }
-
-    /**
-     * Specify if query execution is direct or prepared.
-     *
-     * @return $this
-     */
-    public function directQuery()
-    {
-        return $this->addOption(PDO::MYSQL_ATTR_DIRECT_QUERY, true);
-    }
 }

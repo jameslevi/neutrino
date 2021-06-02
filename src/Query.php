@@ -82,7 +82,7 @@ class Query
      * @param int $value
      * @return $this
      */
-    public function addIntParam(string $key, int $value)
+    public function addIntegerParam(string $key, int $value)
     {
         return $this->addParam($key, $value, PDO::PARAM_INT);
     }
