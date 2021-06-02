@@ -2,8 +2,9 @@
 
 namespace Graphite\Component\Neutrino;
 
-use Error;
 use Exception;
+use Graphite\Component\Neutrino\Exceptions\UnknownMethodException;
+use Graphite\Component\Neutrino\Exceptions\UnsupportedDriverException;
 use PDO;
 use PDOException;
 
@@ -118,7 +119,7 @@ class Neutrino extends DriverSupport
         $this->driver = $driver;
 
         $this->initDriver();
-        $this->setErrorMode('exception');
+        $this->errorModeException();
     }
 
     /**
@@ -128,19 +129,12 @@ class Neutrino extends DriverSupport
      */
     private function initDriver()
     {
-        try
+        if(!static::supported($this->driver))
         {
-            if(!static::supported($this->driver))
-            {
-                throw new Error('Access to unsupported driver.');
-            }
+            throw new UnsupportedDriverException('Declaring unsupported driver.');
+        }
             
-            $this->context = new static::$drivers[$this->driver]($this);
-        }
-        catch(Exception $e)
-        {
-            echo $e->getMessage();
-        }
+        $this->context = new static::$drivers[$this->driver]($this);
     }
 
     /**
@@ -152,19 +146,12 @@ class Neutrino extends DriverSupport
      */
     public function __call(string $name, array $arguments)
     {
-        try
+        if(!method_exists($this->context, $name))
         {
-            if(!method_exists($this->context, $name))
-            {
-                throw new Error('Unknown ' . $this->driver . ' driver method called.');        
-            }
+            throw new UnknownMethodException('Calling for an unknown method.');        
+        }
 
-            $this->context->{$name}(...$arguments);
-        }
-        catch(Exception $e)
-        {
-            echo $e->getMessage();
-        }
+        $this->context->{$name}(...$arguments);
 
         return $this;
     }
@@ -357,7 +344,7 @@ class Neutrino extends DriverSupport
     /**
      * Determine if connection is established.
      *
-     * @return boolean
+     * @return bool
      */
     public function isConnected()
     {
@@ -406,6 +393,11 @@ class Neutrino extends DriverSupport
                 $this->conn = $pdo;
             }
             catch(PDOException $e)
+            {
+                $this->connected = false;
+                $this->error = $e->getMessage();
+            }
+            catch(Exception $e)
             {
                 $this->connected = false;
                 $this->error = $e->getMessage();
@@ -474,7 +466,7 @@ class Neutrino extends DriverSupport
     {
         if(!static::supported($name))
         {
-            throw new Error('Access to unsupported driver.');
+            throw new UnsupportedDriverException('Declaring unsupported driver.');
         }
         
         return (new self($name))->setDatabase($arguments[0]);

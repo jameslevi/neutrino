@@ -2,8 +2,7 @@
 
 namespace Graphite\Component\Neutrino;
 
-use Error;
-use Exception;
+use Graphite\Component\Neutrino\Exceptions\UnknownMethodException;
 
 class Response
 {
@@ -81,21 +80,12 @@ class Response
      */
     public function __call(string $name, array $arguments)
     {
-        try
+        if(!method_exists($this->response, $name))
         {
-            if(!method_exists($this->response, $name))
-            {
-                throw new Error('Unknown response method.');
-            }
+            throw new UnknownMethodException('Unknown response method.');
+        }
 
-            return $this->response->{$name}(...$arguments);
-        }
-        catch(Exception $e)
-        {
-            echo $e->getMessage();
-        }
-        
-        return $this;
+        return $this->response->{$name}(...$arguments);
     }
 
     /**
