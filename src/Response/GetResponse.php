@@ -3,6 +3,7 @@
 namespace Graphite\Component\Neutrino\Response;
 
 use Graphite\Component\Neutrino\BaseResponse;
+use Graphite\Component\Neutrino\Exceptions\InvalidRowIndexException;
 use Graphite\Component\Neutrino\ResponseData;
 use PDO;
 
@@ -18,7 +19,7 @@ class GetResponse extends BaseResponse
     /**
      * Fetch all query results.
      *
-     * @return array
+     * @return $this
      */
     public function fetch()
     {
@@ -37,6 +38,16 @@ class GetResponse extends BaseResponse
             $this->result = $data;
         }
 
+        return $this;
+    }
+
+    /**
+     * Return all results from the query.
+     *
+     * @return array
+     */
+    public function all()
+    {
         return $this->result;
     }
 
@@ -48,10 +59,12 @@ class GetResponse extends BaseResponse
      */
     public function __get(string $name)
     {
-        if($this->numRows() == 1)
+        if($this->numRows() > 1)
         {
-            return $this->first()->{$name};
+            throw new InvalidRowIndexException('Invalid row index.');
         }
+            
+        return $this->first()->{$name};
     }
 
     /**
@@ -74,7 +87,7 @@ class GetResponse extends BaseResponse
     {
         $data = array();
 
-        foreach($this->fetch() as $item)
+        foreach($this->fetch()->all() as $item)
         {
             $data[] = $item->{$name};
         }
@@ -90,7 +103,7 @@ class GetResponse extends BaseResponse
      */
     public function get(int $n)
     {
-        return $this->fetch()[$n];
+        return $this->fetch()->all()[$n];
     }
 
     /**
@@ -100,7 +113,7 @@ class GetResponse extends BaseResponse
      */
     public function first()
     {
-        return $this->fetch()[0];
+        return $this->get(0);
     }
 
     /**
@@ -110,7 +123,7 @@ class GetResponse extends BaseResponse
      */
     public function last()
     {
-        return $this->fetch()[$this->numRows() - 1];
+        return $this->get($this->numRows() - 1);
     }
 
     /**
@@ -120,7 +133,7 @@ class GetResponse extends BaseResponse
      */
     public function numRows()
     {
-        return count($this->fetch());
+        return count($this->fetch()->all());
     }
 
     /**
@@ -142,7 +155,7 @@ class GetResponse extends BaseResponse
     {
         $data = array();
 
-        foreach($this->fetch() as $item)
+        foreach($this->fetch()->all() as $item)
         {
             $data[] = $item->toArray();
         }
@@ -157,6 +170,6 @@ class GetResponse extends BaseResponse
      */
     public function toJson()
     {
-        return json_encode($this->fetch());
+        return json_encode($this->toArray());
     }
 }
