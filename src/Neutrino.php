@@ -476,4 +476,14 @@ class Neutrino extends DriverSupport
         
         return (new self($name))->setDatabase($arguments[0]);
     }
+
+    /**
+     * Return the current version.
+     *
+     * @return string
+     */
+    public static function version()
+    {
+        return 'Neutrino version 1.0.0';
+    }
 }
