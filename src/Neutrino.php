@@ -148,7 +148,7 @@ class Neutrino extends DriverSupport
      *
      * @param string $name
      * @param array $arguments
-     * @return void
+     * @return $this
      */
     public function __call(string $name, array $arguments)
     {
@@ -156,8 +156,7 @@ class Neutrino extends DriverSupport
         {
             if(!method_exists($this->context, $name))
             {
-                $driver = $this->driver;
-                throw new Error("Unknown $driver driver method called.");        
+                throw new Error('Unknown ' . $this->driver . ' driver method called.');        
             }
 
             $this->context->{$name}(...$arguments);
@@ -424,8 +423,10 @@ class Neutrino extends DriverSupport
      */
     public function query(string $query)
     {
-        return new Query($this, $this->conn->prepare(str_replace('  ', ' ', trim($query)), array(
-            PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY
+        $query = str_replace('  ', ' ', trim($query));
+
+        return new Query($query, $this, $this->conn->prepare($query, array(
+            PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY,
         )));
     }
 

@@ -36,16 +36,35 @@ class Query
     private $success = false;
 
     /**
+     * SQL query to execute.
+     *
+     * @var string
+     */
+    private $sql;
+
+    /**
      * Construct a new query instance.
      *
+     * @param string $sql
      * @param Neutrino $context
      * @param PDOStatement $stmt
      * @return void
      */
-    public function __construct(Neutrino $context, PDOStatement $stmt)
+    public function __construct(string $sql, Neutrino $context, PDOStatement $stmt)
     {
+        $this->sql = $sql;
         $this->context = $context;
         $this->stmt = $stmt;
+    }
+
+    /**
+     * Return SQL query to be execute.
+     *
+     * @return string
+     */
+    public function sql()
+    {
+        return $this->sql;
     }
 
     /**
